@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_com_bell_app/core/theme/app_colors.dart';
 import 'package:to_com_bell_app/features/checkin/presentation/widgets/checkin_modal.dart';
 import 'package:to_com_bell_app/features/feed/controllers/feed_controller.dart';
 import 'package:to_com_bell_app/features/feed/widgets/app_shell.dart';
@@ -60,7 +61,7 @@ class _FeedPageState extends State<FeedPage> {
                 onPressed: _abrirCheckin,
                 icon: const Icon(Icons.bolt_rounded),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade400,
+                  backgroundColor: AppColors.accentGreen,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),

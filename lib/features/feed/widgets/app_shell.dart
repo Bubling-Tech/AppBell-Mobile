@@ -31,6 +31,8 @@ class AppShell extends StatelessWidget {
         onPressed: onCameraPressed,
         tooltip: 'Abrir câmera',
         shape: const CircleBorder(),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
         child: const Icon(Icons.camera_alt_rounded),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

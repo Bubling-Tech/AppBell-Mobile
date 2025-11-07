@@ -61,12 +61,7 @@ class _CheckinContentState extends State<_CheckinContent> {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              gradient: LinearGradient(
-                colors: [
-                  Colors.indigo.withOpacity(0.8),
-                  Colors.deepPurple.withOpacity(0.8),
-                ],
-              ),
+              gradient: AppGradients.primaryCTA,
             ),
             child: const Icon(
               Icons.location_on_rounded,
@@ -109,7 +104,12 @@ class _CheckinContentState extends State<_CheckinContent> {
                     ? const SizedBox(
                         width: 24,
                         height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
                       )
                     : const Text('VAMOS LÁ, POSTE E CURTA!'),
               ),

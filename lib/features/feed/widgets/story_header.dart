@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_com_bell_app/core/theme/app_gradients.dart';
 
 class StoryHeader extends StatelessWidget {
   const StoryHeader({super.key, required this.stories});
@@ -7,6 +8,7 @@ class StoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SizedBox(
       height: 110,
       child: ListView.separated(
@@ -25,9 +27,7 @@ class StoryHeader extends StatelessWidget {
                       width: 72,
                       height: 72,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFF7A00), Color(0xFFFF006E)],
-                        ),
+                        gradient: AppGradients.primaryCTA,
                         borderRadius: BorderRadius.circular(36),
                       ),
                     ),
@@ -35,7 +35,7 @@ class StoryHeader extends StatelessWidget {
                       width: 66,
                       height: 66,
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(33),
                       ),
                     ),

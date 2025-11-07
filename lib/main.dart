@@ -11,10 +11,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.fromSeed(
+    final baseScheme = ColorScheme.fromSeed(
       seedColor: AppColors.primary,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
+    );
+    final colorScheme = baseScheme.copyWith(
       background: AppColors.background,
+      surface: AppColors.surface,
+      onBackground: AppColors.textPrimary,
+      onSurface: AppColors.textPrimary,
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
     );
     return MaterialApp(
       title: 'Tô com Bell!',
@@ -24,7 +31,8 @@ class MyApp extends StatelessWidget {
         colorScheme: colorScheme,
         scaffoldBackgroundColor: AppColors.background,
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.surface,
+          foregroundColor: AppColors.textPrimary,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           titleTextStyle: const TextStyle(
