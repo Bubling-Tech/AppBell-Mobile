@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:to_com_bell_app/core/theme/app_gradients.dart';
+import 'package:to_com_bell_app/core/theme/app_colors.dart';
+import 'package:to_com_bell_app/core/widgets/app_gradient_button.dart';
 import 'package:to_com_bell_app/features/eventos/models/evento.dart';
 
 class EventCard extends StatelessWidget {
@@ -10,7 +11,7 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final meses = [
+    final meses = const [
       'JAN',
       'FEV',
       'MAR',
@@ -47,7 +48,10 @@ class EventCard extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Colors.black.withOpacity(0.05), Colors.black87],
+                      colors: [
+                        Colors.black.withOpacity(0.15),
+                        Colors.black.withOpacity(0.75),
+                      ],
                     ),
                   ),
                 ),
@@ -60,23 +64,21 @@ class EventCard extends StatelessWidget {
                   children: [
                     Align(
                       alignment: Alignment.topRight,
-                      child: DecoratedBox(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
-                          gradient: AppGradients.primaryCTA,
+                          color: Colors.white.withOpacity(0.85),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          child: Text(
-                            dataLabel,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium
-                                ?.copyWith(color: Colors.white),
-                          ),
+                        child: Text(
+                          dataLabel,
+                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textStrong,
+                              ),
                         ),
                       ),
                     ),
@@ -85,22 +87,24 @@ class EventCard extends StatelessWidget {
                       children: [
                         Text(
                           evento.nome,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(color: Colors.white),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
                         ),
-                        const SizedBox(height: 8),
-                        FilledButton(
+                        const SizedBox(height: 6),
+                        Text(
+                          '${evento.cidade}, ${evento.estado} – Brasil',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.white70,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        AppGradientButton(
+                          label: 'SAIBA MAIS',
                           onPressed: onTap,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.15),
-                            minimumSize: const Size.fromHeight(44),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text('SAIBA MAIS'),
+                          height: 48,
+                          borderRadius: 14,
                         ),
                       ],
                     ),

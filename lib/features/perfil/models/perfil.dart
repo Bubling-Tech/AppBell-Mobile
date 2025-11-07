@@ -1,3 +1,15 @@
+class AlbumEvento {
+  final String titulo;
+  final String local;
+  final String imagemUrl;
+
+  const AlbumEvento({
+    required this.titulo,
+    required this.local,
+    required this.imagemUrl,
+  });
+}
+
 class Perfil {
   final String id;
   final String nome;
@@ -6,7 +18,7 @@ class Perfil {
   final String localizacaoAtual;
   final int rankingAtual;
   final int checkinsRealizados;
-  final List<String> albuns;
+  final List<AlbumEvento> albuns;
 
   const Perfil({
     required this.id,

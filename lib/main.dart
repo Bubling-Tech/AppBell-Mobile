@@ -15,14 +15,23 @@ class MyApp extends StatelessWidget {
       seedColor: AppColors.primary,
       brightness: Brightness.light,
     );
+
     final colorScheme = baseScheme.copyWith(
-      background: AppColors.background,
-      surface: AppColors.surface,
-      onBackground: AppColors.textPrimary,
-      onSurface: AppColors.textPrimary,
       primary: AppColors.primary,
       secondary: AppColors.secondary,
+      tertiary: AppColors.accentGreen,
+      background: AppColors.background,
+      surface: AppColors.surface,
+      onBackground: AppColors.textStrong,
+      onSurface: AppColors.textStrong,
+      outlineVariant: AppColors.border,
     );
+
+    final textTheme = ThemeData.light().textTheme.apply(
+          bodyColor: AppColors.textStrong,
+          displayColor: AppColors.textStrong,
+        );
+
     return MaterialApp(
       title: 'Tô com Bell!',
       debugShowCheckedModeBanner: false,
@@ -30,20 +39,28 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: colorScheme,
         scaffoldBackgroundColor: AppColors.background,
-        appBarTheme: AppBarTheme(
+        textTheme: textTheme,
+        appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.surface,
-          foregroundColor: AppColors.textPrimary,
-          surfaceTintColor: Colors.transparent,
+          foregroundColor: AppColors.textStrong,
           elevation: 0,
-          titleTextStyle: const TextStyle(
+          surfaceTintColor: Colors.transparent,
+          titleTextStyle: TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textStrong,
           ),
         ),
-        cardTheme: CardTheme(
+        cardTheme: const CardTheme(
           color: AppColors.surface,
           surfaceTintColor: Colors.transparent,
           margin: EdgeInsets.zero,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
         ),
       ),
       initialRoute: AppRoutes.feed,
@@ -51,4 +68,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

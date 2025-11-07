@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_com_bell_app/core/theme/app_colors.dart';
 import 'package:to_com_bell_app/core/utils/result.dart';
 import 'package:to_com_bell_app/features/checkin/presentation/widgets/checkin_modal.dart';
 import 'package:to_com_bell_app/features/feed/widgets/app_shell.dart';
@@ -48,7 +49,10 @@ class _PerfilPageState extends State<PerfilPage> {
         return AppShell(
           current: BottomNavItem.perfil,
           onCameraPressed: () => CheckinModal.show(context),
-          appBar: AppBar(title: const Text('Perfil')),
+          appBar: AppBar(
+            titleSpacing: 24,
+            title: const Text('Meu perfil'),
+          ),
           body: body,
         );
       },
@@ -65,102 +69,118 @@ class _PerfilConteudo extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ListView(
+      padding: EdgeInsets.zero,
       children: [
         Stack(
-          alignment: Alignment.center,
           clipBehavior: Clip.none,
           children: [
             SizedBox(
               height: 200,
+              width: double.infinity,
               child: Image.network(
-                'https://images.unsplash.com/photo-1517630800677-932d836ab680?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1517630800677-932d836ab680?auto=format&fit=crop&w=1400&q=80',
                 fit: BoxFit.cover,
-                width: double.infinity,
               ),
             ),
             Positioned(
-              bottom: -48,
+              left: 0,
+              right: 0,
+              bottom: -54,
               child: CircleAvatar(
-                radius: 60,
+                radius: 54,
                 backgroundColor: Colors.white,
                 child: CircleAvatar(
-                  radius: 56,
+                  radius: 50,
                   backgroundImage: NetworkImage(perfil.avatarUrl),
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 56),
+        const SizedBox(height: 72),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(perfil.nome, style: theme.textTheme.headlineSmall),
+              Text(
+                perfil.nome,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
               const SizedBox(height: 8),
               Text(
                 perfil.bio,
-                style: theme.textTheme.bodyMedium,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textMedium,
+                ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               PerfilBadges(
                 ranking: perfil.rankingAtual,
                 checkins: perfil.checkinsRealizados,
               ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Localização atual'),
-                            const SizedBox(height: 8),
-                            Text(perfil.localizacaoAtual,
-                                style: theme.textTheme.titleMedium),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.music_note_rounded),
-                            const SizedBox(width: 12),
-                            Text('Spotify', style: theme.textTheme.titleMedium),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
               const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on_rounded,
+                        color: AppColors.secondary),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        perfil.localizacaoAtual,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceMuted,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.music_note_rounded,
+                              size: 16, color: AppColors.secondary),
+                          SizedBox(width: 6),
+                          Text('Spotify'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Meus eventos', style: theme.textTheme.titleMedium),
+                child: Text(
+                  'Meus eventos',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               GridView.builder(
-                itemCount: perfil.albuns.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+                itemCount: perfil.albuns.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
@@ -169,41 +189,57 @@ class _PerfilConteudo extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
                   final album = perfil.albuns[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(
+                  return Container(
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Image.network(
-                            'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=800&q=80',
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(album, style: theme.textTheme.titleSmall),
-                              const SizedBox(height: 4),
-                              Text(
-                                perfil.localizacaoAtual,
-                                style: theme.textTheme.labelMedium,
-                              ),
-                            ],
-                          ),
+                      border: Border.all(color: AppColors.border),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
                         ),
                       ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Image.network(
+                              album.imagemUrl,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  album.titulo,
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  album.local,
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    color: AppColors.textMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
               ),
-              const SizedBox(height: 32),
             ],
           ),
         ),

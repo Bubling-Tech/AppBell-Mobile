@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_com_bell_app/core/theme/app_colors.dart';
 import 'package:to_com_bell_app/core/utils/result.dart';
 import 'package:to_com_bell_app/features/checkin/presentation/widgets/checkin_modal.dart';
 import 'package:to_com_bell_app/features/feed/widgets/app_shell.dart';
@@ -19,8 +20,7 @@ class _RankingPageState extends State<RankingPage> {
   @override
   void initState() {
     super.initState();
-    controller = RankingController();
-    controller.carregarRanking();
+    controller = RankingController()..carregarRanking();
   }
 
   @override
@@ -48,7 +48,10 @@ class _RankingPageState extends State<RankingPage> {
         return AppShell(
           current: BottomNavItem.ranking,
           onCameraPressed: () => CheckinModal.show(context),
-          appBar: AppBar(title: const Text('Ranking geral')),
+          appBar: AppBar(
+            titleSpacing: 24,
+            title: const Text('Ranking geral'),
+          ),
           body: body,
         );
       },
@@ -63,19 +66,53 @@ class _RankingConteudo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final demais = entries
-        .where((entry) => entry.posicao == null || entry.posicao! > 3)
-        .toList();
+    final top3 = entries.take(3).toList();
+    final demais = entries.skip(3).toList();
     return ListView(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
       children: [
-        RankingPodium(entries: entries),
+        if (top3.length == 3) RankingPodium(entries: top3),
+        const SizedBox(height: 24),
         ...demais.map(
-          (entry) => ListTile(
-            leading:
-                CircleAvatar(backgroundImage: NetworkImage(entry.avatarUrl)),
-            title: Text(entry.nome),
-            subtitle: Text('${entry.pontos} pontos'),
-            trailing: Text('#${entry.posicao}'),
+          (entry) => Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.border),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: ListTile(
+              leading: CircleAvatar(
+                radius: 24,
+                backgroundImage: NetworkImage(entry.avatarUrl),
+              ),
+              title: Text(
+                entry.nome,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              subtitle: Text(
+                '${entry.pontos} pontos',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textMedium,
+                    ),
+              ),
+              trailing: Text(
+                '#${entry.posicao}',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppColors.secondary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ),
           ),
         ),
       ],

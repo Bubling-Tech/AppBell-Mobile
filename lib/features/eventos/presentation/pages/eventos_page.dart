@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:to_com_bell_app/core/theme/app_colors.dart';
 import 'package:to_com_bell_app/core/utils/result.dart';
 import 'package:to_com_bell_app/features/checkin/presentation/widgets/checkin_modal.dart';
 import 'package:to_com_bell_app/features/eventos/controllers/eventos_controller.dart';
+import 'package:to_com_bell_app/features/eventos/models/evento.dart';
 import 'package:to_com_bell_app/features/eventos/models/filtro_evento.dart';
 import 'package:to_com_bell_app/features/eventos/presentation/widgets/event_card.dart';
 import 'package:to_com_bell_app/features/eventos/presentation/widgets/event_list_item.dart';
@@ -46,13 +48,10 @@ class _EventosPageState extends State<EventosPage> {
     Navigator.of(context).pushNamed(AppRoutes.eventoDetalhe(id));
   }
 
-  Future<void> _abrirCheckin() async {
-    await CheckinModal.show(context);
-  }
+  Future<void> _abrirCheckin() => CheckinModal.show(context);
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
@@ -60,6 +59,7 @@ class _EventosPageState extends State<EventosPage> {
           current: BottomNavItem.eventos,
           onCameraPressed: _abrirCheckin,
           appBar: AppBar(
+            titleSpacing: 24,
             title: const Text('Próximos shows'),
             actions: [
               TextButton(
@@ -72,23 +72,26 @@ class _EventosPageState extends State<EventosPage> {
             onRefresh: controller.carregarEventos,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildCarrossel(theme),
+                  _buildCarrossel(),
                   const SizedBox(height: 24),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
                       children: [
-                        Text('Todos os eventos',
-                            style: theme.textTheme.titleMedium),
+                        Text(
+                          'Todos os eventos',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
                         const Spacer(),
                         IconButton(
-                          icon: const Icon(Icons.filter_list_rounded),
-                          tooltip: 'Aplicar filtros',
                           onPressed: _abrirFiltro,
+                          tooltip: 'Aplicar filtros',
+                          icon: const Icon(Icons.tune_rounded),
                         ),
                       ],
                     ),
@@ -103,37 +106,39 @@ class _EventosPageState extends State<EventosPage> {
     );
   }
 
-  Widget _buildCarrossel(ThemeData theme) {
+  Widget _buildCarrossel() {
     final estado = controller.proximos;
     if (estado.status == ResultStatus.loading) {
       return const SizedBox(
-        height: 200,
+        height: 320,
         child: Center(child: CircularProgressIndicator()),
       );
     }
     if (estado.status == ResultStatus.error) {
-      return _MensagemErro(mensagem: estado.message!);
+      return _MensagemEstado(
+        mensagem: estado.message ?? 'Não foi possível carregar os eventos.',
+      );
     }
-    if (estado.status == ResultStatus.empty || estado.data?.isEmpty == true) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Text('Nenhum evento encontrado.'),
+    final lista = estado.data ?? const <Evento>[];
+    if (lista.isEmpty) {
+      return _MensagemEstado(
+        mensagem: estado.message ?? 'Nenhum evento encontrado no momento.',
       );
     }
     return SizedBox(
       height: 320,
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
-          final evento = estado.data![index];
+          final evento = lista[index];
           return EventCard(
             evento: evento,
             onTap: () => _irParaDetalhe(evento.id),
           );
         },
         separatorBuilder: (_, __) => const SizedBox(width: 16),
-        itemCount: estado.data!.length,
+        itemCount: lista.length,
       ),
     );
   }
@@ -142,26 +147,34 @@ class _EventosPageState extends State<EventosPage> {
     final estado = controller.todos;
     if (estado.status == ResultStatus.loading) {
       return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 48),
+        padding: EdgeInsets.symmetric(vertical: 56),
         child: Center(child: CircularProgressIndicator()),
       );
     }
     if (estado.status == ResultStatus.error) {
-      return _MensagemErro(mensagem: estado.message!);
-    }
-    if (estado.status == ResultStatus.empty || estado.data?.isEmpty == true) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-        child: Text('Nenhum evento com esse filtro.'),
+      return _MensagemEstado(
+        mensagem: estado.message ?? 'Não foi possível carregar os eventos.',
       );
     }
-    return ListView.builder(
-      padding: EdgeInsets.zero,
+    final lista = estado.data ?? const <Evento>[];
+    if (lista.isEmpty) {
+      return _MensagemEstado(
+        mensagem: estado.message ?? 'Nenhum evento encontrado com esse filtro.',
+      );
+    }
+    return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: estado.data!.length,
+      itemCount: lista.length,
+      padding: const EdgeInsets.only(bottom: 120),
+      separatorBuilder: (_, __) => const Divider(
+        indent: 24,
+        endIndent: 24,
+        height: 0,
+        color: AppColors.border,
+      ),
       itemBuilder: (context, index) {
-        final evento = estado.data![index];
+        final evento = lista[index];
         return EventListItem(
           evento: evento,
           onTap: () => _irParaDetalhe(evento.id),
@@ -171,20 +184,26 @@ class _EventosPageState extends State<EventosPage> {
   }
 }
 
-class _MensagemErro extends StatelessWidget {
-  const _MensagemErro({required this.mensagem});
+class _MensagemEstado extends StatelessWidget {
+  const _MensagemEstado({required this.mensagem});
 
   final String mensagem;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(mensagem),
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            mensagem,
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: AppColors.textMedium),
+          ),
         ),
       ),
     );

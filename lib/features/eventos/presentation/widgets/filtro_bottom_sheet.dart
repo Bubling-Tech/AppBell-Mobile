@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:to_com_bell_app/core/theme/app_gradients.dart';
+import 'package:to_com_bell_app/core/theme/app_colors.dart';
+import 'package:to_com_bell_app/core/widgets/app_gradient_button.dart';
 import 'package:to_com_bell_app/features/eventos/models/filtro_evento.dart';
 
 class FiltroBottomSheet extends StatefulWidget {
@@ -13,9 +14,8 @@ class FiltroBottomSheet extends StatefulWidget {
   }) {
     return showModalBottomSheet<FiltroEvento>(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (_) => FiltroBottomSheet(filtroAtual: filtroAtual),
     );
   }
@@ -51,90 +51,138 @@ class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
     mesSelecionado = widget.filtroAtual.mes;
   }
 
-  void _resetar() {
-    setState(() {
-      ufSelecionada = null;
-      mesSelecionado = null;
-    });
-    Navigator.of(context).pop(const FiltroEvento());
-  }
-
   void _aplicar() {
     Navigator.of(context).pop(
       FiltroEvento(uf: ufSelecionada, mes: mesSelecionado),
     );
   }
 
+  void _resetar() {
+    Navigator.of(context).pop(const FiltroEvento());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Filtros', style: theme.textTheme.titleLarge),
-          const SizedBox(height: 24),
-          DropdownButtonFormField<String>(
-            value: ufSelecionada,
-            decoration: const InputDecoration(labelText: 'Estado'),
-            items: ufs
-                .map((uf) => DropdownMenuItem(value: uf, child: Text(uf)))
-                .toList(),
-            onChanged: (value) => setState(() => ufSelecionada = value),
-          ),
-          const SizedBox(height: 16),
-          DropdownButtonFormField<int>(
-            value: mesSelecionado,
-            decoration: const InputDecoration(labelText: 'Mês'),
-            items: meses.entries
-                .map(
-                  (entry) => DropdownMenuItem(
-                    value: entry.key,
-                    child: Text(entry.value),
-                  ),
-                )
-                .toList(),
-            onChanged: (value) => setState(() => mesSelecionado = value),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: _resetar,
-                  child: const Text('RESETAR'),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: SizedBox(
-                  height: 56,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: AppGradients.primaryCTA,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      onPressed: _aplicar,
-                      child: const Text('APLICAR FILTROS'),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-        ],
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
       ),
+      child: Container(
+        height: size.height * 0.6,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.14),
+              blurRadius: 24,
+              offset: const Offset(0, -12),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 64,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 24),
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ),
+            Text(
+              'Filtros de eventos',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            const SizedBox(height: 24),
+            _buildDropdownUf(context),
+            const SizedBox(height: 16),
+            const Divider(color: AppColors.border, thickness: 1),
+            const SizedBox(height: 16),
+            _buildDropdownMes(context),
+            const Spacer(),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _resetar,
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                      side: const BorderSide(color: AppColors.border),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text('RESETAR'),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: AppGradientButton(
+                    label: 'APLICAR FILTROS',
+                    onPressed: _aplicar,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDropdownUf(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      value: ufSelecionada,
+      borderRadius: BorderRadius.circular(16),
+      decoration: InputDecoration(
+        labelText: 'Estado',
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 12),
+          child: Container(
+            width: 12,
+            height: 12,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.accentGreen,
+            ),
+          ),
+        ),
+        prefixIconConstraints: const BoxConstraints(minWidth: 40),
+      ),
+      items: ufs
+          .map(
+            (uf) => DropdownMenuItem(value: uf, child: Text(uf)),
+          )
+          .toList(),
+      onChanged: (value) => setState(() => ufSelecionada = value),
+    );
+  }
+
+  Widget _buildDropdownMes(BuildContext context) {
+    return DropdownButtonFormField<int>(
+      value: mesSelecionado,
+      borderRadius: BorderRadius.circular(16),
+      decoration: const InputDecoration(labelText: 'Mês'),
+      items: meses.entries
+          .map(
+            (entry) => DropdownMenuItem(
+              value: entry.key,
+              child: Text(entry.value),
+            ),
+          )
+          .toList(),
+      onChanged: (value) => setState(() => mesSelecionado = value),
     );
   }
 }

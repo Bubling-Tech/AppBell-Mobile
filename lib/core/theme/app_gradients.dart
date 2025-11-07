@@ -4,6 +4,6 @@ class AppGradients {
   static const Gradient primaryCTA = LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
-    colors: [Color(0xFFFF5125), Color(0xFFFF135E)],
+    colors: [Color(0xFFFF7A00), Color(0xFFFF006E)],
   );
 }
