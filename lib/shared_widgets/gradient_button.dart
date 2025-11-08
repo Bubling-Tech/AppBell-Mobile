@@ -11,6 +11,7 @@ class GradientButton extends StatelessWidget {
     this.height = 52,
     this.borderRadius = const BorderRadius.all(Radius.circular(14)),
     this.textStyle,
+    this.boxShadow,
   });
 
   final String text;
@@ -18,6 +19,7 @@ class GradientButton extends StatelessWidget {
   final double height;
   final BorderRadius borderRadius;
   final TextStyle? textStyle;
+  final List<BoxShadow>? boxShadow;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +31,10 @@ class GradientButton extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: AppGradients.primary,
             borderRadius: borderRadius,
-            boxShadow: const [
-              BoxShadow(color: Color(0x26000000), blurRadius: 10, offset: Offset(0, 4)),
-            ],
+            boxShadow: boxShadow ??
+                const [
+                  BoxShadow(color: Color(0x26000000), blurRadius: 10, offset: Offset(0, 4)),
+                ],
           ),
           child: Center(
             child: Text(
