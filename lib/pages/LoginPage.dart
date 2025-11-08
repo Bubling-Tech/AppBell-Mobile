@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:to_com_bell_app/components/ButtonLarge.dart';
 import 'package:to_com_bell_app/components/FormField.dart';
 import 'package:to_com_bell_app/pages/Registration/RegistrationScreen.dart';
+import 'package:to_com_bell_app/pages/shell/AppShell.dart';
 import 'package:to_com_bell_app/theme/app_fonts.dart';
 
 class Loginpage extends StatefulWidget {
@@ -17,8 +18,10 @@ class _LoginpageState extends State<Loginpage> {
   final TextEditingController _senhaController = TextEditingController();
 
   void _login() {
-    String email = _emailController.text;
-    print("Email: $email");
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const AppShell()),
+    );
   }
   @override
   Widget build(BuildContext context) {
