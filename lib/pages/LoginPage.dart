@@ -19,6 +19,7 @@ class _LoginpageState extends State<Loginpage> {
   void _login() {
     String email = _emailController.text;
     print("Email: $email");
+    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
   }
   @override
   Widget build(BuildContext context) {

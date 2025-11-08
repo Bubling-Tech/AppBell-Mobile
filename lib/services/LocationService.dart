@@ -1,26 +1,25 @@
-import 'package:dio/dio.dart';
 import 'ApiClient.dart';
 
 class LocationService {
   final ApiClient apiClient = ApiClient();
 
   Future<List<Map<String, dynamic>>> fetchStates() async {
-    try {
-      Response response = await apiClient.get("/estados", withAuth: false);
+    final response = await apiClient.get("/estados", withAuth: false);
 
+    if (response.statusCode == 200) {
       return List<Map<String, dynamic>>.from(response.data);
-    } catch (e) {
-      throw Exception("Erro ao buscar estados: $e");
     }
+
+    throw Exception(response.message ?? "Erro ao buscar estados mockados.");
   }
 
   Future<List<Map<String, dynamic>>> fetchCities(int stateId) async {
-    try {
-      Response response = await apiClient.get("/cidades/estado/$stateId", withAuth: false);
+    final response = await apiClient.get("/cidades/estado/$stateId", withAuth: false);
 
+    if (response.statusCode == 200) {
       return List<Map<String, dynamic>>.from(response.data);
-    } catch (e) {
-      throw Exception("Erro ao buscar cidades: $e");
     }
+
+    throw Exception(response.message ?? "Erro ao buscar cidades mockadas.");
   }
 }
