@@ -260,8 +260,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       barrierDismissible: false,
       builder: (ctx) {
         return CheckinSuccessDialog(
-          onPrimary: () async {
-            Navigator.pop(ctx);
+          onConfirm: () async {
             await SL.camera.openCameraAndReturn(context);
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
