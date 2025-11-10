@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:to_com_bell_app/pages/LoginPage.dart';
-import 'package:to_com_bell_app/pages/SplashScreen.dart';
+
+import 'core/app_theme.dart';
+import 'routes/app_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,14 +15,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tô com Bell!',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/splash',
-      routes: {
-        '/splash': (context) => const SplashScreen(),
-        '/login': (context) => const Loginpage(),
-        // '/home': (context) => const HomePage(),
-
-      },
+      theme: AppTheme.build(),
+      initialRoute: '/',
+      onGenerateRoute: onGenerateRoute,
     );
   }
 }
-

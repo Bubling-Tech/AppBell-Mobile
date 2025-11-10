@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 
 class ApiClient {
@@ -12,7 +11,6 @@ class ApiClient {
       receiveTimeout: const Duration(seconds: 10),
     ));
 
-    // 🔹 Adicionando Interceptor para Token JWT automaticamente
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await getToken();
@@ -30,7 +28,6 @@ class ApiClient {
     ));
   }
 
-
   Future<Response> get(String endpoint, {bool withAuth = true}) async {
     if (!withAuth) {
       return Dio().get("$baseUrl$endpoint");
@@ -38,20 +35,18 @@ class ApiClient {
     return dio.get(endpoint);
   }
 
-  Future<Response> post(String endpoint, Map<String, dynamic> data, {Map<String, dynamic>? queryParameters, bool withAuth = true}) async {
+  Future<Response> post(String endpoint, Map<String, dynamic> data,
+      {Map<String, dynamic>? queryParameters, bool withAuth = true}) async {
     if (!withAuth) {
-      return Dio().post("$baseUrl$endpoint", data: data, queryParameters: queryParameters);
+      return Dio().post("$baseUrl$endpoint",
+          data: data, queryParameters: queryParameters);
     }
     return dio.post(endpoint, data: data);
   }
-
-
 
   static Future<String?> getToken() async {
     return "SEU_TOKEN";
   }
 
-  static Future<void> removeToken() async {
-
-  }
+  static Future<void> removeToken() async {}
 }

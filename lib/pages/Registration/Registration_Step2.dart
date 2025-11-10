@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:to_com_bell_app/components/DropdownCustom.dart';
 import 'package:to_com_bell_app/components/FormField.dart';
-import 'package:to_com_bell_app/services/UserService.dart';
-import '../../components/DropdownCustom.dart';
-import '../../models/User.dart';
-import '../../services/LocationService.dart';
+import 'package:to_com_bell_app/models/User.dart';
+import 'package:to_com_bell_app/services/LocationService.dart';
 
 class Registration_Step2 extends StatefulWidget {
   final Function(bool) onValidate;
@@ -22,9 +21,7 @@ class Registration_Step2 extends StatefulWidget {
 }
 
 class _Registration_Step2State extends State<Registration_Step2> {
-  final TextEditingController _emailController = TextEditingController();
-  LocationService locationService = LocationService();
-  UserService userService = UserService();
+  final LocationService locationService = LocationService();
 
   List<Map<String, dynamic>> estados = [];
   List<Map<String, dynamic>> cidades = [];
@@ -38,76 +35,58 @@ class _Registration_Step2State extends State<Registration_Step2> {
     carregarEstados();
   }
 
-  void carregarEstados() async {
+  Future<void> carregarEstados() async {
     try {
-      List<Map<String, dynamic>> estadosCarregados = await locationService.fetchStates();
+      final List<Map<String, dynamic>> estadosCarregados = await locationService.fetchStates();
       setState(() {
         estados = estadosCarregados;
-
         if (widget.user.estadoId != null) {
-          estadoSelecionado = estados.firstWhere(
-                (e) => e["id"] == widget.user.estadoId,
-            orElse: () => {"nome": null},
-          )["nome"];
+          estadoSelecionado = estados
+              .firstWhere((e) => e["id"] == widget.user.estadoId, orElse: () => {"nome": null})["nome"];
         } else {
           estadoSelecionado = estados.isNotEmpty ? estados.first["nome"] : null;
         }
-
         if (estadoSelecionado != null) {
-          int estadoId = estados.firstWhere((e) => e["nome"] == estadoSelecionado)["id"];
+          final int estadoId = estados.firstWhere((e) => e["nome"] == estadoSelecionado)["id"];
           carregarCidades(estadoId);
         }
       });
-
-      _validateFields(); // Chama a validação após carregar os estados
+      _validateFields();
     } catch (e) {
-      print("Erro ao carregar estados: $e");
+      debugPrint("Erro ao carregar estados: $e");
     }
   }
 
-  void carregarCidades(int estadoId) async {
+  Future<void> carregarCidades(int estadoId) async {
     try {
-      List<Map<String, dynamic>> cidadesCarregadas = await locationService.fetchCities(estadoId);
+      final List<Map<String, dynamic>> cidadesCarregadas = await locationService.fetchCities(estadoId);
       setState(() {
         cidades = cidadesCarregadas;
-
-        if (widget.user.cidadeId != null &&
-            cidades.any((c) => c["id"] == widget.user.cidadeId)) {
-          cidadeSelecionada = cidades.firstWhere(
-                (c) => c["id"] == widget.user.cidadeId,
-            orElse: () => {"nome": null},
-          )["nome"];
+        if (widget.user.cidadeId != null && cidades.any((c) => c["id"] == widget.user.cidadeId)) {
+          cidadeSelecionada = cidades
+              .firstWhere((c) => c["id"] == widget.user.cidadeId, orElse: () => {"nome": null})["nome"];
         } else {
           cidadeSelecionada = cidades.isNotEmpty ? cidades.first["nome"] : null;
         }
       });
-
-      _validateFields(); // Chama a validação após carregar as cidades
+      _validateFields();
     } catch (e) {
-      print("Erro ao carregar cidades: $e");
+      debugPrint("Erro ao carregar cidades: $e");
     }
   }
 
   void _validateFields() {
-    if (estados.isEmpty || cidades.isEmpty) return; // Evita validar se ainda não carregou os dados
+    if (estados.isEmpty || cidades.isEmpty) return;
 
     widget.user.email = widget.emailController.text;
-    widget.user.estadoId = estados.firstWhere(
-          (e) => e["nome"] == estadoSelecionado,
-      orElse: () => {"id": null},
-    )["id"];
+    widget.user.estadoId = estados
+        .firstWhere((e) => e["nome"] == estadoSelecionado, orElse: () => {"id": null})["id"];
 
-    widget.user.cidadeId = cidades.firstWhere(
-          (c) => c["nome"] == cidadeSelecionada,
-      orElse: () => {"id": null},
-    )["id"];
+    widget.user.cidadeId = cidades
+        .firstWhere((c) => c["nome"] == cidadeSelecionada, orElse: () => {"id": null})["id"];
 
-    print("Estado selecionado: $estadoSelecionado, ID: ${widget.user.estadoId}");
-    print("Cidade selecionada: $cidadeSelecionada, ID: ${widget.user.cidadeId}");
-
-    bool isValid = widget.user.email!.isNotEmpty &&
-        widget.user.estadoId != null &&
-        widget.user.cidadeId != null;
+    final bool isValid =
+        widget.user.email!.isNotEmpty && widget.user.estadoId != null && widget.user.cidadeId != null;
 
     widget.onValidate(isValid);
   }
@@ -121,7 +100,7 @@ class _Registration_Step2State extends State<Registration_Step2> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Padding(
-              padding: EdgeInsets.only(top: 20, left: 0, right: 60, bottom: 0),
+              padding: EdgeInsets.only(top: 20, right: 60),
               child: Text(
                 "Crie sua conta e entre no universo Bell Marques!",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -137,50 +116,44 @@ class _Registration_Step2State extends State<Registration_Step2> {
               onChanged: (_) => _validateFields(),
             ),
             const SizedBox(height: 10),
-
             estados.isEmpty
-                ? Center(
-              child: CircularProgressIndicator(
-                color: Colors.blue,
-              ),
-            )
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.blue,
+                    ),
+                  )
                 : DropdownCustom(
-              items: estados.map((e) => e["nome"].toString()).toList(),
-              onChanged: (value) {
-                setState(() {
-                  estadoSelecionado = value;
-                  cidadeSelecionada = null; // Resetamos a cidade ao trocar o estado
-                  cidades = []; // Limpa a lista temporariamente
-                });
-
-                int estadoId = estados.firstWhere((e) => e["nome"] == value)["id"];
-                carregarCidades(estadoId);
-              },
-              labelText: "Estado",
-              initialValue: estadoSelecionado, // Agora o estado salvo será mostrado corretamente
-            ),
-
+                    items: estados.map((e) => e["nome"].toString()).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        estadoSelecionado = value;
+                        cidadeSelecionada = null;
+                        cidades = [];
+                      });
+                      final int estadoId = estados.firstWhere((e) => e["nome"] == value)["id"];
+                      carregarCidades(estadoId);
+                    },
+                    labelText: "Estado",
+                    initialValue: estadoSelecionado,
+                  ),
             const SizedBox(height: 10),
-
             cidades.isEmpty
-                ? Center(
-              child: CircularProgressIndicator(
-                color: Colors.blue,
-              ),
-            )
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.blue,
+                    ),
+                  )
                 : DropdownCustom(
-              items: cidades.map((c) => c["nome"].toString()).toList(),
-              onChanged: (value) {
-                setState(() {
-                  cidadeSelecionada = value;
-                });
-                _validateFields();
-              },
-              labelText: "Cidade",
-              initialValue: cidades.any((c) => c["nome"] == cidadeSelecionada)
-                  ? cidadeSelecionada
-                  : null, // Agora a cidade salva será mostrada corretamente
-            ),
+                    items: cidades.map((c) => c["nome"].toString()).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        cidadeSelecionada = value;
+                      });
+                      _validateFields();
+                    },
+                    labelText: "Cidade",
+                    initialValue: cidades.any((c) => c["nome"] == cidadeSelecionada) ? cidadeSelecionada : null,
+                  ),
           ],
         ),
       ),

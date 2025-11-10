@@ -18,19 +18,15 @@ class SuccessRegistrationScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Imagem central
           Center(
             child: Image.asset(
-              "lib/assets/images/splash.jpg", // Certifique-se de adicionar essa imagem ao seu projeto
+              "lib/assets/images/splash.jpg",
               width: 200,
               height: 200,
               fit: BoxFit.contain,
             ),
           ),
-
           const SizedBox(height: 30),
-
-          // Título principal
           const Text(
             "Cadastro realizado com sucesso!",
             style: TextStyle(
@@ -40,10 +36,7 @@ class SuccessRegistrationScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-
           const SizedBox(height: 10),
-
-          // Texto secundário
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 40),
             child: Text(
@@ -52,18 +45,15 @@ class SuccessRegistrationScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-
           const SizedBox(height: 40),
-
-          // Botão para ir ao login
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ButtonSmall(
               onPressed: () => _goToLogin(context),
               text: "Ir para o login",
-              gradientColors: [
-                Color(0xFFFF5125), // Cor inicial do degradê
-                Color(0xFFFF135E), // Cor final do degradê
+              gradientColors: const [
+                Color(0xFFFF5125),
+                Color(0xFFFF135E),
               ],
             ),
           ),

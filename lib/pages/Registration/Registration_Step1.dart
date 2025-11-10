@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:to_com_bell_app/components/FormField.dart';
-
-import '../../models/User.dart';
+import 'package:to_com_bell_app/models/User.dart';
 
 class Registration_Step1 extends StatefulWidget {
   final Function(bool) onValidate;
@@ -10,26 +9,27 @@ class Registration_Step1 extends StatefulWidget {
   final TextEditingController nomeController;
   final TextEditingController sobrenomeController;
 
-  const Registration_Step1({super.key, required this.onValidate, required this.user, required this.apelidoController,
+  const Registration_Step1({
+    super.key,
+    required this.onValidate,
+    required this.user,
+    required this.apelidoController,
     required this.nomeController,
-    required this.sobrenomeController,});
+    required this.sobrenomeController,
+  });
 
   @override
   _Registration_Step1State createState() => _Registration_Step1State();
 }
 
 class _Registration_Step1State extends State<Registration_Step1> {
-
-
-
   void _validateFields() {
     widget.user.apelido = widget.apelidoController.text;
     widget.user.nome = widget.nomeController.text;
     widget.user.sobrenome = widget.sobrenomeController.text;
 
-    bool isValid = widget.user.apelido!.isNotEmpty &&
-        widget.user.nome!.isNotEmpty &&
-        widget.user.sobrenome!.isNotEmpty;
+    final bool isValid =
+        widget.user.apelido!.isNotEmpty && widget.user.nome!.isNotEmpty && widget.user.sobrenome!.isNotEmpty;
 
     widget.onValidate(isValid);
   }
@@ -49,7 +49,6 @@ class _Registration_Step1State extends State<Registration_Step1> {
             ),
             const Text("Para começar, nos conte um pouco sobre você:"),
             const SizedBox(height: 20),
-
             FormFieldCustom(
               controller: widget.apelidoController,
               hintText: "Apelido",

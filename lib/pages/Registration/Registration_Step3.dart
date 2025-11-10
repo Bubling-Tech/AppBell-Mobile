@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:to_com_bell_app/components/FormField.dart';
-
-import '../../models/User.dart';
+import 'package:to_com_bell_app/models/User.dart';
 
 class Registration_Step3 extends StatefulWidget {
   final Function(bool) onValidate;
@@ -22,16 +21,12 @@ class Registration_Step3 extends StatefulWidget {
 }
 
 class _Registration_Step3State extends State<Registration_Step3> {
-
   void _validateFields() {
-    // Atualiza os valores no objeto User
     widget.user.senha = widget.senhaController.text;
 
-    // Validação para verificar se os campos estão preenchidos e as senhas são iguais
-    bool isValid = widget.user.senha!.isNotEmpty &&
-        widget.senhaController.text.isNotEmpty &&
-        widget.confirmarSenhaController.text.isNotEmpty &&
-        widget.senhaController.text == widget.confirmarSenhaController.text;
+    final bool isValid =
+        widget.user.senha!.isNotEmpty && widget.senhaController.text.isNotEmpty && widget.confirmarSenhaController.text.isNotEmpty &&
+            widget.senhaController.text == widget.confirmarSenhaController.text;
 
     widget.onValidate(isValid);
   }
@@ -50,7 +45,6 @@ class _Registration_Step3State extends State<Registration_Step3> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-
             FormFieldCustom(
               controller: widget.senhaController,
               hintText: "Senha",

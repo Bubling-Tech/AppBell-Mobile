@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:to_com_bell_app/components/DropdownCustom.dart';
-import 'package:to_com_bell_app/components/FormField.dart';
 import 'package:to_com_bell_app/models/User.dart';
 
 class Registration_Step4 extends StatefulWidget {
   final VoidCallback onValidationComplete;
   final User user;
 
-  const Registration_Step4({super.key, required this.onValidationComplete, required this.user});
+  const Registration_Step4({
+    super.key,
+    required this.onValidationComplete,
+    required this.user,
+  });
 
   @override
   _Registration_Step4State createState() => _Registration_Step4State();
 }
 
 class _Registration_Step4State extends State<Registration_Step4> {
-  List<TextEditingController> controllers =
-      List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> controllers = List.generate(6, (_) => TextEditingController());
   bool isCodeValid = false;
 
+  @override
+  void dispose() {
+    for (final controller in controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   void _onTextChanged() {
-    String code = controllers.map((c) => c.text).join();
+    final String code = controllers.map((c) => c.text).join();
     setState(() {
       isCodeValid = code.length == 6;
     });
@@ -32,21 +41,23 @@ class _Registration_Step4State extends State<Registration_Step4> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 20, left: 0, right: 60, bottom: 0),
-            child: const Text(
-                "Valide seu email!",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Padding(
+            padding: EdgeInsets.only(top: 20, right: 60),
+            child: Text(
+              "Valide seu email!",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ),
           const SizedBox(height: 10),
-          Text("Enviamos um código para o email ${widget.user.email}.Por favor, insira o código abaixo para concluir seu cadastro."),
-          Center(child: const SizedBox(height: 25)),
-          Align(
+          Text(
+            "Enviamos um código para o email ${widget.user.email}.Por favor, insira o código abaixo para concluir seu cadastro.",
+          ),
+          const SizedBox(height: 25),
+          const Align(
             alignment: Alignment.center,
             child: Text(
               "Digite o código de 6 dígitos",
@@ -67,7 +78,7 @@ class _Registration_Step4State extends State<Registration_Step4> {
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
                   maxLength: 1,
-                  cursorColor: Color(0xFF1877F2),
+                  cursorColor: const Color(0xFF1877F2),
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,

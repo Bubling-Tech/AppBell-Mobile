@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:to_com_bell_app/components/ButtonSmall.dart';
 import 'package:to_com_bell_app/models/User.dart';
 import 'package:to_com_bell_app/pages/LoginPage.dart';
@@ -33,7 +33,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _confirmarSenhaController = TextEditingController();
 
-
   @override
   void initState() {
     super.initState();
@@ -45,7 +44,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   void dispose() {
-    // Evita vazamento de memória
     _apelidoController.dispose();
     _nomeController.dispose();
     _sobrenomeController.dispose();
@@ -55,15 +53,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Future<void> _enviarCodigoConfirmacao() async {
     try {
-      print("aqui");
       await _userService.enviarCodigoConfirmacao(_user.email ?? "");
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Código de confirmação enviado para o e-mail!"),
           backgroundColor: Colors.green,
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Erro ao enviar código: $e"),
@@ -73,26 +72,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  void _nextPage() async {
+  Future<void> _nextPage() async {
     if (_isStepValid) {
-      // Apenas no segundo step (onde o e-mail é validado)
       if (_currentPage == 1) {
-        print(_emailController.text );
-        print(_user.email);
-        bool emailValido = await _userService.verificarEmail(_emailController.text);
-
+        final bool emailValido = await _userService.verificarEmail(_emailController.text);
         if (!emailValido) {
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text("Este e-mail já está cadastrado. Por favor, use outro e-mail."),
               backgroundColor: Colors.red,
             ),
           );
-          return; // Impede de avançar para a próxima página
+          return;
         }
       }
 
-      // Se o e-mail for válido ou estiver em outra etapa, avança normalmente
       if (_currentPage < 3) {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
@@ -103,19 +98,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           _isStepValid = false;
         });
 
-        // Se for para o último step (Step 4), envia o código de confirmação
         if (_currentPage == 3) {
-          _enviarCodigoConfirmacao();
+          await _enviarCodigoConfirmacao();
         }
       }
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
-            children: [
-              const Icon(Icons.warning, color: Colors.white),
-              const SizedBox(width: 10),
-              const Expanded(
+            children: const [
+              Icon(Icons.warning, color: Colors.white),
+              SizedBox(width: 10),
+              Expanded(
                 child: Text(
                   "Preencha todos os campos antes de continuar.",
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -139,7 +134,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-
   void _previousPage() {
     if (_currentPage > 0) {
       _pageController.previousPage(
@@ -161,12 +155,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _finalizeRegistration() {
-    print("Cadastro finalizado!");
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const SuccessRegistrationScreen()),
     );
-    print(_user.toJson());
   }
 
   void _updateButtonState(bool isValid) {
@@ -176,7 +168,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   String _getStepIcon(int currentPage) {
-    List<String> stepIcons = [
+    final List<String> stepIcons = [
       "lib/assets/icons/user-check-registration.svg",
       "lib/assets/icons/file-registration.svg",
       "lib/assets/icons/lock-registration.svg",
@@ -188,45 +180,54 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(preferredSize: Size.fromHeight(116),
-          child: Container(
-            height: 116,
-              padding: const EdgeInsets.only(top: 55, left: 16, right: 16, bottom: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(116),
+        child: Container(
+          height: 116,
+          padding: const EdgeInsets.only(top: 55, left: 16, right: 16, bottom: 10),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
                 Color(0xFFFF5125),
-                Color(0xFFFF135E)
-              ])
+                Color(0xFFFF135E),
+              ],
             ),
-              child: Column(
+          ),
+          child: Column(
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        _getStepIcon(_currentPage),
-                        width: 28,
-                        height: 28,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: 8),
-                      Text("Etapa ${_currentPage + 1} de 4: ", style: TextStyle(color: Colors.white, fontWeight: AppFonts.bold)),
-                      Text("Sobre Você", style: TextStyle(color: Colors.white, fontWeight: AppFonts.normal))
-                    ],
+                  SvgPicture.asset(
+                    _getStepIcon(_currentPage),
+                    width: 28,
+                    height: 28,
+                    color: Colors.white,
                   ),
-                  SizedBox(height: 13),
-                  LinearProgressIndicator(
-                    value: (_currentPage + 1) / 4,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.yellow),
-                    borderRadius: BorderRadius.circular(8),
-                    minHeight: 5,
+                  const SizedBox(width: 8),
+                  Text(
+                    "Etapa ${_currentPage + 1} de 4: ",
+                    style: TextStyle(color: Colors.white, fontWeight: AppFonts.bold),
                   ),
+                  Text(
+                    "Sobre Você",
+                    style: TextStyle(color: Colors.white, fontWeight: AppFonts.normal),
+                  )
                 ],
               ),
-          )),
+              const SizedBox(height: 13),
+              LinearProgressIndicator(
+                value: (_currentPage + 1) / 4,
+                backgroundColor: Colors.grey[300],
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.yellow),
+                borderRadius: BorderRadius.circular(8),
+                minHeight: 5,
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -234,39 +235,54 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                Registration_Step1(user: _user, onValidate: _updateButtonState, apelidoController: _apelidoController, nomeController: _nomeController,
-                  sobrenomeController: _sobrenomeController),
-                Registration_Step2(user: _user, onValidate: _updateButtonState,  emailController: _emailController),
-                Registration_Step3(user: _user, onValidate: _updateButtonState, senhaController: _senhaController,  confirmarSenhaController: _confirmarSenhaController,),
-                Registration_Step4(user: _user, onValidationComplete: _finalizeRegistration)
+                Registration_Step1(
+                  user: _user,
+                  onValidate: _updateButtonState,
+                  apelidoController: _apelidoController,
+                  nomeController: _nomeController,
+                  sobrenomeController: _sobrenomeController,
+                ),
+                Registration_Step2(
+                  user: _user,
+                  onValidate: _updateButtonState,
+                  emailController: _emailController,
+                ),
+                Registration_Step3(
+                  user: _user,
+                  onValidate: _updateButtonState,
+                  senhaController: _senhaController,
+                  confirmarSenhaController: _confirmarSenhaController,
+                ),
+                Registration_Step4(
+                  user: _user,
+                  onValidationComplete: _finalizeRegistration,
+                )
               ],
             ),
           ),
-
-          // Botões de navegação
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                  Expanded(
-                    child: ButtonSmall(
-                      onPressed: _currentPage > 0 ? _previousPage : _loginPage,
-                      text: "VOLTAR",
-                      gradientColors: [
-                        Color(0xFFFFFFFF),
-                        Color(0xFFFFFFFF),
-                      ],
-                      borderColor: 0xFFDDDDDD,
-                      textColor: 0xFF949494,
-                    ),
+                Expanded(
+                  child: ButtonSmall(
+                    onPressed: _currentPage > 0 ? _previousPage : _loginPage,
+                    text: "VOLTAR",
+                    gradientColors: const [
+                      Color(0xFFFFFFFF),
+                      Color(0xFFFFFFFF),
+                    ],
+                    borderColor: 0xFFDDDDDD,
+                    textColor: 0xFF949494,
                   ),
-                SizedBox(width: 10),
+                ),
+                const SizedBox(width: 10),
                 Expanded(
                   child: ButtonSmall(
                     onPressed: _currentPage == 3 ? _finalizeRegistration : _nextPage,
                     text: _currentPage == 3 ? "VALIDAR" : "CONTINUAR",
-                    gradientColors: [
+                    gradientColors: const [
                       Color(0xFFFF5125),
                       Color(0xFFFF135E),
                     ],

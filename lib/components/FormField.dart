@@ -70,16 +70,16 @@ class _FormFieldCustomState extends State<FormFieldCustom> {
               prefixIcon: widget.icon != null ? Icon(widget.icon) : null,
               suffixIcon: widget.isPassword
                   ? IconButton(
-                icon: Icon(
-                  _obscureText ? Icons.visibility : Icons.visibility_off,
-                ),
-                iconSize: 18,
-                onPressed: () {
-                  setState(() {
-                    _obscureText = !_obscureText;
-                  });
-                },
-              )
+                      icon: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      iconSize: 18,
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                    )
                   : null,
             ),
             onChanged: widget.onChanged,
